@@ -21,11 +21,11 @@ var AreaData = function(){
 
 
 var PlayerData = function(){
-	this.area_c=0;	// エリア数
-	this.area_tc=0;	// 隣接エリア最大数
-	this.dice_c=0;	// ダイス総数
-	this.dice_jun=0;	// ダイス数順位
-	this.stock=0;		// ストックダイス
+	this.area_c=0;	// エリア数 (number of areas)
+	this.area_tc=0;	// 隣接エリア最大数 (maximum number of adjacent areas)
+	this.dice_c=0;	// ダイス総数 (total number of dies)
+	this.dice_jun=0;	// ダイス数順位 (dice number rank)
+	this.stock=0;		// ストックダイス (stock dice)
 }
 
 var JoinData = function(){
@@ -41,7 +41,7 @@ var HistoryData = function(){
 var Game = function(){
 	var i,j;
 
-	// メソッド 隣のセル番号を返す
+	// メソッド 隣のセル番号を返す (return the cell number to the next method)
 	this.next_cel = function( opos, dir ){
 		var ox = opos%this.XMAX;
 		var oy = Math.floor(opos/this.XMAX);
@@ -49,12 +49,12 @@ var Game = function(){
 		var ax=0;
 		var ay=0;
 		switch(dir){
-			case 0: ax=f; ay=-1; break;	// 右上
-			case 1: ax=1; break;	// 右
-			case 2: ax=f; ay=1;break;	// 右下
-			case 3: ax=f-1; ay=1;break;	// 左下
-			case 4: ax=-1; break;	// 左
-			case 5: ax=f-1; ay=-1; break;	// 左上
+			case 0: ax=f; ay=-1; break;	// 右上 (upper right)
+			case 1: ax=1; break;	// 右 (right)
+			case 2: ax=f; ay=1;break;	// 右下 (bottom right)
+			case 3: ax=f-1; ay=1;break;	// 左下 (bottom left)
+			case 4: ax=-1; break;	// 左 (left)
+			case 5: ax=f-1; ay=-1; break;	// 左上 (upper left)
 		}
 		var x = ox+ax;
 		var y = oy+ay;
@@ -63,66 +63,66 @@ var Game = function(){
 	}
 
 	
-	// セルデータ
+	// セルデータ (cell data)
 	this.XMAX=28;
 	this.YMAX=32;
 	this.cel_max = this.XMAX * this.YMAX;
 	this.cel = new Array(this.cel_max);
-	// 隣接セルを入れた配列
+	// 隣接セルを入れた配列 (arrangement with adjacent cells)
 	this.join = new Array(this.cel_max);
 	for( i=0; i<this.cel_max; i++ ){
 		this.join[i] = new JoinData();
 		for( j=0; j<6; j++ ) this.join[i].dir[j] = this.next_cel(i,j);
 	}
-	// エリアデータ
-	this.AREA_MAX = 32;	// 最大エリア数
+	// エリアデータ (area data)
+	this.AREA_MAX = 32;	// 最大エリア数 (maximum number of areas)
 	this.adat = new Array();
 	for( i=0; i<32; i++ ) this.adat[i] = new AreaData();
-	// マップ作成時に使う
-	this.num = new Array(this.cel_max);		// エリア通番
+	// マップ作成時に使う (used for map creation)
+	this.num = new Array(this.cel_max);		// エリア通番 (area serial number)
 	for( i=0; i<this.cel_max; i++ ) this.num[i] = i;
-	this.rcel = new Array(this.cel_max);		// 隣接セル
+	this.rcel = new Array(this.cel_max);		// 隣接セル (adjacent cell)
 	
-	this.next_f = new Array(this.cel_max);	// 浸透時に使う周囲セル
-	this.alist = new Array(this.AREA_MAX);	// エリアリスト
-	this.chk = new Array(this.AREA_MAX);		// エリア描画線用
-	this.tc = new Array(this.AREA_MAX);		// 隣接エリア数で使用
-	// ゲームデータ
-	this.pmax=7;		// プレイヤー数
-	this.user=0;		// ユーザープレイヤー
-	this.put_dice=3;	// 配置ダイス平均数
-	this.jun = [0,1,2,3,4,5,6,7];			// 順番
-	this.ban = 0;			// 手番 現在のプレイヤーは player = jun[ban];
-	this.area_from=0;	// 攻撃元
-	this.area_to=0;		// 攻撃先
-	this.defeat=0;		// 0.攻撃失敗　1.攻撃成功
-	// プレイヤーデータ
+	this.next_f = new Array(this.cel_max);	// 浸透時に使う周囲セル (peripheral cell to use for penetration)
+	this.alist = new Array(this.AREA_MAX);	// エリアリスト (area list)
+	this.chk = new Array(this.AREA_MAX);		// エリア描画線用 (for area drawing lines)
+	this.tc = new Array(this.AREA_MAX);		// 隣接エリア数で使用 (used in adjacent area number)
+	// ゲームデータ (game data)
+	this.pmax=7;		// プレイヤー数 (number of players)
+	this.user=0;		// ユーザープレイヤー (user player)
+	this.put_dice=3;	// 配置ダイス平均数 (average number of placement dice)
+	this.jun = [0,1,2,3,4,5,6,7];			// 順番 (order)
+	this.ban = 0;			// 手番 現在のプレイヤーは player = jun[ban]; (the current player is player = jun[ban];)
+	this.area_from=0;	// 攻撃元 (attack source)
+	this.area_to=0;		// 攻撃先 (attack destination)
+	this.defeat=0;		// 0.攻撃失敗　1.攻撃成功 (0. attack failure, 1. attack success)
+	// プレイヤーデータ (player data)
 	this.player = new Array(8);
-	this.STOCK_MAX=64;	// 最大ストック数
-	// COM思考
+	this.STOCK_MAX=64;	// 最大ストック数 (maximum number of stocks)
+	// COM思考 (com thinking)
 	this.list_from = new Array(this.AREA_MAX*this.AREA_MAX);
 	this.list_to = new Array(this.AREA_MAX*this.AREA_MAX);
-	// 履歴
+	// 履歴 (history)
 	this.his = new Array();
 	this.his_c = 0;
-	// 初期配置
+	// 初期配置 (initial placement)
 	this.his_arm = new Array(this.AREA_MAX);
 	this.his_dice = new Array(this.AREA_MAX);
 	
-	// ゲーム開始（マップ作成しておくこと、pmax,userなど設定しておくこと）
+	// ゲーム開始（マップ作成しておくこと、pmax,userなど設定しておくこと）(Starting the game (making maps, setting pmax, user etc.))
 	this.start_game = function(){
 		var i;
-		// 順番シャッフル
+		// 順番シャッフル (order shuffle)
 		for( i=0; i<8; i++ ) this.jun[i] = i;
 		for( i=0; i<this.pmax; i++ ){
 			var r = Math.floor(Math.random()*this.pmax);
 			var tmp=this.jun[i]; this.jun[i]=this.jun[r]; this.jun[r]=tmp;
 		}
 		this.ban = 0;
-		// プレイヤーデータ作成
+		// プレイヤーデータ作成 (create player data)
 		for( i=0; i<8; i++ ) this.player[i] = new PlayerData();
 		for( i=0; i<8; i++ ) this.set_area_tc(i);
-		// 履歴
+		// 履歴 (history)
 		this.his_c = 0;
 		for( i=0; i<this.AREA_MAX; i++ ){
 			this.his_arm[i] = this.adat[i].arm;
@@ -130,7 +130,7 @@ var Game = function(){
 		}
 	}
 	
-	// 隣接エリア最大数
+	// 隣接エリア最大数 (maximum number of adjacent areas)
 	this.set_area_tc = function( pn ){
 		this.player[pn].area_tc = 0;
 		var i,j;
@@ -443,10 +443,10 @@ var Game = function(){
 	}
 	
 	/////////////////////////////////////////////////////////////////////
-	// COM思考
+	// COM思考 (COM thinking)
 	this.com_thinking = function(){
 		var i,j;
-		// エリア数、ダイス総数チェック		
+		// エリア数、ダイス総数チェック	(Number of areas, total dice check)	
 		for( i=0; i<8; i++ ){
 			this.player[i].area_c = 0;
 			this.player[i].dice_c = 0;
@@ -459,7 +459,7 @@ var Game = function(){
 			this.player[arm].dice_c += this.adat[i].dice;
 			sum += this.adat[i].dice;
 		}
-		// ダイス順位
+		// ダイス順位 (Dice ranking)
 		for( i=0; i<8; i++ ) this.player[i].dice_jun = i;
 		for( i=0; i<8-1; i++ ){
 			for( j=i+1; j<8; j++ ){
@@ -470,12 +470,12 @@ var Game = function(){
 				}
 			}
 		}
-		// ダントツトップ目
+		// ダントツトップ目 (Dantotsu top eyes...find the most advantaged player)
 		var top = -1;
 		for( i=0; i<8; i++ ){
 			if( this.player[i].dice_c > sum*2/5 ) top = i;
 		}
-		// 攻撃元、攻撃先のリストを作り、ランダムで決める
+		// 攻撃元、攻撃先のリストを作り、ランダムで決める (Make a list of attack sources and destintions, decide at random)
 		var list_from = new Array(this.AREA_MAX*this.AREA_MAX);
 		var list_to = new Array(this.AREA_MAX*this.AREA_MAX);
 		var lc = 0;
@@ -488,16 +488,16 @@ var Game = function(){
 				if( this.adat[j].size == 0 ) continue;
 				if( this.adat[j].arm == pn ) continue;
 				if( this.adat[i].join[j]==0 ) continue;
-				if( top>=0 ){	// ダントツがいて、２着以下から２着以下
+				if( top>=0 ){	// ダントツがいて、２着以下から２着以下 (if there is an advantaged player, make sure to attack it?)
 					if( this.adat[i].arm!=top && this.adat[j].arm!=top ) continue;
 				}
-				if( this.adat[j].dice > this.adat[i].dice ) continue;	// 敵が多勢
-				// 敵と同数の場合
+				if( this.adat[j].dice > this.adat[i].dice ) continue;	// 敵が多勢 (massive enemies)
+				// 敵と同数の場合 (if we have the same number of dice as enemies)
 				if( this.adat[j].dice == this.adat[i].dice ){
 					var en = this.adat[j].arm;
 					var f=0;
-					if( this.player[pn].dice_jun == 0 ) f=1;		// 自分がトップの時は仕掛ける
-					if( this.player[en].dice_jun == 0 ) f=1;		// 相手がトップの時は仕掛ける
+					if( this.player[pn].dice_jun == 0 ) f=1;		// 自分がトップの時は仕掛ける (If we're top ranked, attack)
+					if( this.player[en].dice_jun == 0 ) f=1;		// 相手がトップの時は仕掛ける (If the opponent is top ranked, attack)
 					if( Math.random()*10>1 ) f=1;
 					if( f==0 ) continue;
 				}

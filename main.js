@@ -3,7 +3,7 @@ var canvas, stage;
 var builder;
 var touchdev = false;
 
-// イベント関数
+// イベント関数 (event function)
 var timer_func = new Function();	timer_func = null;
 var click_func = new Function();	click_func = null;
 var move_func = new Function();		move_func = null;
@@ -11,30 +11,30 @@ var release_func = new Function();	release_func = null;
 var waitcount=0;
 var stat=0;
 
-// ゲームオブジェクト
+// ゲームオブジェクト (game object)
 var game = new Game();
 
-// 表示位置
-var org = {view_w:840,view_h:840,cel_w:27,cel_h:18,ypos_mes:688,ypos_arm:770};	// オリジナルサイズ
+// 表示位置 (display position)
+var org = {view_w:840,view_h:840,cel_w:27,cel_h:18,ypos_mes:688,ypos_arm:770};	// オリジナルサイズ (original size)
 var nume = 1;
 var deno = 1;
 var view_w,view_h;
-var cel_w,cel_h;	// カードの大きさと
-var ypos_mes;		// メッセージ、戦闘ダイスの位置
-var ypos_arm;		// 各軍のステータス表示位置
-var dot;			// 1ドットの大きさ
+var cel_w,cel_h;	// カードの大きさと (the size of the card)
+var ypos_mes;		// メッセージ、戦闘ダイスの位置 (message, position of battle dice)
+var ypos_arm;		// 各軍のステータス表示位置 (status display position of each army)
+var dot;			// 1ドットの大きさ (size of 1 dot)
 
-// セル描画位置
+// セル描画位置 (cell drawing position)
 var cpos_x = new Array();
 var cpos_y = new Array();
 
-// スプライト
+// スプライト (sprite)
 var spr = new Array();
 
-// スプライト番号
+// スプライト番号 (sprite number)
 var sn_area = 0;
-var sn_from = 0;	// 攻撃元エリアのスプライト番号
-var sn_to = 0;	// 攻撃先エリアのスプライト番号
+var sn_from = 0;	// 攻撃元エリアのスプライト番号 (sprite number of attak area)
+var sn_to = 0;	// 攻撃先エリアのスプライト番号 (sprite number of attack destination area)
 var sn_dice = 0;
 var sn_info = 0;
 var sn_ban = 0;
@@ -48,28 +48,28 @@ var sn_pmax = 0;
 var sn_load = 0;
 var sn_mes = 0;
 var sn_btn = 0;
-var sn_max = 0;	// 最大数
+var sn_max = 0;	// 最大数 (maximum number)
 
-var prio = new Array();		// エリアダイスの表示順
-var an2sn = new Array();	// エリア番号からダイススプライト番号を返す
+var prio = new Array();		// エリアダイスの表示順 (the display order of area dice)
+var an2sn = new Array();	// エリア番号からダイススプライト番号を返す (returns the die sprite number from the area number)
 
-// ボタン
+// ボタン (button)
 var bmax = 0;
 var activebutton = -1;
 var btn_func = new Array();
 
-// バトルクラス
+// バトルクラス (battle class)
 var Battle = function(){
-	this.dn = 0;	// ダイス番号(止めるべき位置)
-	this.arm = 0;	// ダイス色
-	this.dmax = 0;	// ダイス数
+	this.dn = 0;	// ダイス番号(止めるべき位置) (dice number (position to stop))
+	this.arm = 0;	// ダイス色 (dice color)
+	this.dmax = 0;	// ダイス数 (number of dice)
 	this.deme = [0,0,0,0,0,0,0,0];
 	this.sum = 0;
-	this.fin = [0,0,0,0,0,0,0,0];	// 終了フラグ
-	this.usedice = [0,1,2,3,4,5,6,7];	// 使うダイス
+	this.fin = [0,0,0,0,0,0,0,0];	// 終了フラグ (end flag)
+	this.usedice = [0,1,2,3,4,5,6,7];	// 使うダイス (dice used)
 }
 var battle = new Array();
-var bturn = 0;	// バトル用ターン
+var bturn = 0;	// バトル用ターン (battle turn)
 
 // 履歴の再生用
 var replay_c=0;
