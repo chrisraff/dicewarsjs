@@ -39,6 +39,8 @@ var HistoryData = function(){
 }
 
 var Game = function(){
+	this.ai = [-1,1,0,0,0,0,0,0];			// the ai type - 0: original, 1: empty ai
+
 	var i,j;
 
 	// メソッド 隣のセル番号を返す (return the cell number to the next method)
@@ -441,10 +443,26 @@ var Game = function(){
 			if( c==old_cel && d==old_dir ) break;
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////
+	// COM思考 (COM thinking - splitter)
+	this.com_thinking = function() {
+		switch (this.ai[ this.jun[this.ban] ]) {
+			case 0:
+			return this.com_original();
+
+			case 1:
+			return this.com_empty();
+
+			default:
+			console.log('oops');
+			return 0;
+		}
+	}
 	
 	/////////////////////////////////////////////////////////////////////
-	// COM思考 (COM thinking)
-	this.com_thinking = function(){
+	// COM思考 (COM thinking - original)
+	this.com_original = function(){
 		var i,j;
 		// エリア数、ダイス総数チェック	(Number of areas, total dice check)	
 		for( i=0; i<8; i++ ){
@@ -512,6 +530,13 @@ var Game = function(){
 		this.area_from = list_from[n];
 		this.area_to = list_to[n];
 	}
+
+	/////////////////////////////////////////////////////////////////////
+	// 履歴に追加
+	this.com_empty = function(){
+		return 0;
+	}
+
 	
 	/////////////////////////////////////////////////////////////////////
 	// 履歴に追加
