@@ -541,6 +541,7 @@ var Game = function(){
 			var highest_friendly_neighbor_dice = 0;
 			var highest_unfriendly_neighbor_dice = 0;
 			var second_highest_unfriendly_neighbor_dice = 0;
+			var num_neighbors = 0;
 
 			for ( i=0; i<that.AREA_MAX; i++ ) {
 				if (i == area_id) continue;
@@ -569,11 +570,14 @@ var Game = function(){
 				}
 			}
 
+			num_neighbors = friendly_neighbors + unfriendly_neighbors
+
 			return {friendly_neighbors: friendly_neighbors,
 					unfriendly_neighbors: unfriendly_neighbors,
 					highest_friendly_neighbor_dice: highest_friendly_neighbor_dice,
 					highest_unfriendly_neighbor_dice: highest_unfriendly_neighbor_dice,
-					second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice
+					second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice,
+					num_neighbors: num_neighbors
 				};
 		}
 
@@ -616,7 +620,7 @@ var Game = function(){
 							if ( this.adat[j].dice < this.adat[ this.area_from ].dice ) continue; // prefer larger dice
 							else if ( adat[j].dice == this.adat[ this.area_from ] .dice)
 								// then prefer the less connected region
-								if ( adat[j].join.reduce((t,n)=>t+n) < adat[this.area_from].join.reduce((t,n)=>t+n) )
+								if ( area_info[j].num_neighbors < area_info[this.area_from].num_neighbors )
 									continue
 
 						} else continue; // let the other one out first
