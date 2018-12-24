@@ -39,7 +39,7 @@ var HistoryData = function(){
 }
 
 var Game = function(){
-	this.ai = [-1,1,0,0,0,0,0,0];			// the ai type - 0: original, 1: empty ai
+	this.ai = [-1,1,1,1,0,0,0,0];			// the ai type - 0: original, 1: defensive ai
 
 	var i,j;
 
@@ -452,7 +452,7 @@ var Game = function(){
 			return this.com_original();
 
 			case 1:
-			return this.com_empty();
+			return this.com_defensive();
 
 			default:
 			console.log('oops');
@@ -533,8 +533,102 @@ var Game = function(){
 
 	/////////////////////////////////////////////////////////////////////
 	// 履歴に追加
-	this.com_empty = function(){
-		return 0;
+	this.com_defensive = function(){
+		// compute info for every area only once
+		area_get_info = function( area_id ){
+			var friendly_neighbors = 0;
+			var unfriendly_neighbors = 0;
+			var highest_friendly_neighbor_dice = 0;
+			var highest_unfriendly_neighbor_dice = 0;
+			var second_highest_unfriendly_neighbor_dice = 0;
+
+			for ( i=0; i<that.AREA_MAX; i++ ) {
+				if (i == area_id) continue;
+
+				// find adjacent regions
+				if ( ! that.adat[ area_id ].join[ i ] )
+					continue;
+
+				var num_dice = that.adat[i].dice;
+
+				if (that.adat[area_id].arm == that.adat[i].arm) {
+					friendly_neighbors += 1;
+
+					if (highest_friendly_neighbor_dice < num_dice)
+						highest_friendly_neighbor_dice = num_dice;
+				}
+				else {
+					unfriendly_neighbors += 1;
+
+					if (highest_unfriendly_neighbor_dice < num_dice) {
+						second_highest_unfriendly_neighbor_dice = highest_unfriendly_neighbor_dice;
+						highest_unfriendly_neighbor_dice = num_dice;
+					}
+					else if (second_highest_unfriendly_neighbor_dice < num_dice)
+						second_highest_unfriendly_neighbor_dice = num_dice;
+				}
+			}
+
+			return {friendly_neighbors: friendly_neighbors,
+					unfriendly_neighbors: unfriendly_neighbors,
+					highest_friendly_neighbor_dice: highest_friendly_neighbor_dice,
+					highest_unfriendly_neighbor_dice: highest_unfriendly_neighbor_dice,
+					second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice
+				};
+		}
+
+		var that = this; // for getting variables in the map function
+
+		// compute the area info once
+		var area_info = [...Array(this.AREA_MAX).keys()].map( area_get_info );
+
+		var pn = this.get_pn();
+
+		this.area_from = -1;
+		this.area_to = -1;
+
+		// for all potential defenders
+		for ( i=0; i<this.AREA_MAX; i++ ) {
+			if ( this.adat[i].arm == pn ) continue;
+
+			// for all potential attackers of this defender
+			for ( j=0; j<this.AREA_MAX; j++ ) {
+				if ( this.adat[j].arm != pn ) continue;
+				if ( ! this.adat[i].join[j] ) continue;
+
+				// is the attacker actually in a position to attack?
+				if ( this.adat[i].dice >= this.adat[j].dice && this.adat[j].dice != 8 ) continue;
+				// does winning invite a strong counter attack?
+				if ( area_info[i].highest_friendly_neighbor_dice > this.adat[j].dice ) continue;
+				// does the attacker have something to defend from (and I have a meaningful connected area)?
+				if ( this.player[pn].area_tc > 4
+					&& area_info[ j ].second_highest_unfriendly_neighbor_dice > 2
+					&& this.player[pn].stock == 0 ) continue;
+
+				// check against previous attacker
+				if (this.area_from == -1) {
+					// no previous attacker, assign them
+					this.area_from = j;
+					this.area_to = i;
+				} else {
+					if ( area_info[ this.area_from ].unfriendly_neighbors == 1) { // if it's the only way out
+						if ( area_info[j].unfriendly_neighbors == 1 ) { // ...for both of them
+							if ( this.adat[j].dice < this.adat[ this.area_from ].dice ) continue; // prefer larger dice
+							else if ( adat[j].dice == this.adat[ this.area_from ] .dice)
+								// then prefer the less connected region
+								if ( adat[j].join.reduce((t,n)=>t+n) < adat[this.area_from].join.reduce((t,n)=>t+n) )
+									continue
+
+						} else continue; // let the other one out first
+					}
+				}
+
+			}
+		}
+
+		// only return 0 if I don't want to make a move
+		if (this.area_from == -1)
+			return 0;
 	}
 
 	
