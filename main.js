@@ -92,7 +92,7 @@ function resize(n){
 	return n*nume/deno;
 }
 
-// 起動
+// 起動 Start-up
 window.addEventListener("load", init);
 function init() {
 	var i,j,c,n;
@@ -108,7 +108,7 @@ function init() {
 	if( touchdev ){
 		soundon = false;
 	}
-	// 表示位置
+	// 表示位置 (display position)
 	var iw = window.innerWidth;
 	var ih = window.innerHeight;
 	if( iw/org.view_w<ih/org.view_h ){
@@ -129,10 +129,10 @@ function init() {
 	dot = 1*nume/deno;
 	for( i=0; i<2; i++ ) battle[i] = new Battle();
 
-	// スプライト番号
+	// スプライト番号 (sprite number)
 	var sn = 0;
 
-	// セルの位置
+	// セルの位置 (cell position)
 	c=0;
 	for( i=0; i<game.YMAX; i++ ){
 		for( j=0; j<game.XMAX; j++ ){
@@ -143,7 +143,7 @@ function init() {
 		}
 	}
 	
-	// エリア描画 +2 (攻撃元と攻撃先)
+	// エリア描画 +2 (攻撃元と攻撃先) (area drawing +2 (attack source, destination))
 	sn_area = sn;
 	for( i=0; i<game.AREA_MAX+2; i++ ){
 		spr[sn] = new createjs.Shape();
@@ -152,10 +152,10 @@ function init() {
 		stage.addChild(spr[sn]);
 		sn++;
 	}
-	sn_from = sn_area + game.AREA_MAX;	// 攻撃元エリアのスプライト番号
-	sn_to = sn_area + game.AREA_MAX+1;	// 攻撃先エリアのスプライト番号
+	sn_from = sn_area + game.AREA_MAX;	// 攻撃元エリアのスプライト番号 (sprite number of attack area)
+	sn_to = sn_area + game.AREA_MAX+1;	// 攻撃先エリアのスプライト番号 (sprite number of attack destination)
 	
-	// エリアダイス
+	// エリアダイス (area dice)
 	sn_dice = sn;
 	builder = new createjs.SpriteSheetBuilder();
 	var mc = new lib.areadice();
@@ -167,17 +167,17 @@ function init() {
 		stage.addChild(spr[sn]);
 		sn++;
 	}
-	// エリアダイス表示順
+	// エリアダイス表示順 (area dice display order)
 	for( i=0; i<game.AREA_MAX; i++ ){
 		prio[i] = new Object();
 		prio[i].an = i;
-		prio[i].cpos = 0;	// 後で使う
+		prio[i].cpos = 0;	// 後で使う (to use later)
 	}
 	
-	// マップ以外のスプライト番号(一括で消すため)
+	// マップ以外のスプライト番号(一括で消すため) (sprite numbers other than map (to erase all at once))
 	sn_info = sn;
 	
-	// プレイヤー状態
+	// プレイヤー状態 (player state)
 	sn_ban = sn;
 	spr[sn] = new lib.mc();
 	stage.addChild(spr[sn]);
@@ -207,7 +207,7 @@ function init() {
 		sn++;
 	}
 	
-	// バトルダイス
+	// バトルダイス (battle dice)
 	sn_battle = sn;
 	spr[sn] = new createjs.Container();
 	spr[sn].y = ypos_mes;
@@ -238,7 +238,7 @@ function init() {
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	// 供給ダイス
+	// 供給ダイス (supply dice)
 	sn_supply = sn;
 	spr[sn] = new createjs.Container();
 	spr[sn].y = ypos_mes;
@@ -281,14 +281,14 @@ function init() {
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	// タイトル画面
+	// タイトル画面 (title screen)
 	sn_title = sn;
 	spr[sn] = new lib.mc();
 	spr[sn].scaleX = spr[sn].scaleY = nume/deno;
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	// プレイヤー数設定
+	// プレイヤー数設定 (player number setting)
 	sn_pmax = sn;
 	spr[sn] = new createjs.Container();
 	for( i=0; i<7; i++ ){
@@ -303,13 +303,13 @@ function init() {
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	// Loading用(web フォントを読んでおくため)
+	// Loading用(web フォントを読んでおくため) (for loading (to read the web font))
 	sn_load = sn;
 	spr[sn] = new createjs.Text("Now loading...", Math.floor(24*nume/deno)+"px Anton", "#000000");
 	stage.addChild(spr[sn]);
 	sn++;
 
-	// 汎用メッセージ
+	// 汎用メッセージ (generic message)
 	sn_mes = sn;
 	spr[sn] = new createjs.Text("Now loading...", Math.floor(30*nume/deno)+"px Roboto", "#000000");
 	spr[sn].textAlign = "center";
@@ -317,8 +317,8 @@ function init() {
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	// ボタン
 	var btxt = ["START","TOP PAGE","YES","NO","END TURN","TITLE","HISTORY"];
+	// ボタン (button)
 	bmax = btxt.length;
 	sn_btn = sn;
 	for( i=0; i<bmax; i++ ){
@@ -335,12 +335,12 @@ function init() {
 		spr[sn].scaleY = nume/deno;
 		spr[sn].visible = true;
 		sn++;
-		// ボタン関数
+		// ボタン (button)関数 (button function)
 		btn_func[i] = new Function();
 		btn_func[i] = null;
 	}
 
-	// スプライト枚数
+	// スプライト枚数 (sprite number)
 	sn_max = sn;
 	for( i=0; i<sn_max; i++ ) spr[i].visible = false;
 	
@@ -351,7 +351,7 @@ function init() {
 	createjs.Ticker.setFPS(60);
 	
 	if( soundon ){
-		// PCの場合にはサウンド読み込む
+		// PCの場合にはサウンド読み込む (in the case of a pc, load sound)
 		var queue = new createjs.LoadQueue(false);
 		queue.installPlugin(createjs.Sound);
 		queue.loadManifest(manifest,true);
@@ -384,20 +384,20 @@ function playSound(soundid){
 }
 
 ////////////////////////////////////////////////////
-// イベントリスナー群
+// イベントリスナー群 (event listeners)
 ////////////////////////////////////////////////////
 
 function mouseDownListner(e) {
 	if( click_func != null ){ click_func(e); }
-	canvas.style.cursor="default";  // マウスカーソルの変更
+	canvas.style.cursor="default";  // マウスカーソルの変更 (change mouse cursor)
 }
 function mouseMoveListner(e) {
 	if( move_func != null ){ move_func(e); }
-	canvas.style.cursor="default";  // マウスカーソルの変更
+	canvas.style.cursor="default";  // マウスカーソルの変更 (change mouse cursor)
 }
 function mouseUpListner(e) {
 	if( release_func != null ){ release_func(e); }
-	canvas.style.cursor="default";  // マウスカーソルの変更
+	canvas.style.cursor="default";  // マウスカーソルの変更 (change mouse cursor)
 	if( activebutton>=0 ){
 		if( btn_func[activebutton] != null ){
 			playSound("snd_button");
@@ -411,7 +411,7 @@ function onTick() {
 	check_button();
 }
 
-// ボタン
+// ボタン (button)
 function check_button(){
 	var i,sn;
 	var n=-1;
@@ -453,7 +453,7 @@ function fake_loading(){
 }
 
 ////////////////////////////////////////////////////
-// タイトル画面
+// タイトル画面 (title screen)
 ////////////////////////////////////////////////////
 
 function start_title(){
@@ -478,7 +478,7 @@ function start_title(){
 		spr[sn_pmax].getChildByName("p"+i).color = (i==game.pmax-2)?"#aa0000":"#cccccc";
 	}
 	
-	// ボタン
+	// ボタン (button)
 	spr[sn_btn+0].x = resize(640);
 	spr[sn_btn+0].y = resize(390);
 	spr[sn_btn+0].visible = true;
@@ -514,7 +514,7 @@ function click_pmax(){
 }
 
 ////////////////////////////////////////////////////
-// マップ作成画面
+// マップ作成画面 (map creation screen)
 ////////////////////////////////////////////////////
 
 function make_map(){
@@ -559,7 +559,7 @@ function make_map(){
 	spr[sn_mes].x = view_w*0.1;
 	spr[sn_mes].y = ypos_mes;
 
-	// ボタン
+	// ボタン (button)
 	spr[sn_btn+2].x = resize(500);
 	spr[sn_btn+2].y = ypos_mes;
 	spr[sn_btn+2].visible = true;
@@ -706,7 +706,7 @@ function start_man(){
 	spr[sn_mes].x = view_w*0.05;
 	spr[sn_mes].y = ypos_mes;
 	
-	// ボタン
+	// ボタン (button)
 	activebutton = -1;	// ボタンをクリックしてないのにendturnになるバグ対応
 	spr[sn_btn+4].x = view_w-100*nume/deno;
 	spr[sn_btn+4].y = ypos_mes;
@@ -1171,8 +1171,8 @@ function gameover(){
 		o.y+=0.5;
 		if( o.y>-70 ) o.y=-70;
 		if( waitcount>=160 ){
-			// ボタン
 			spr[sn_btn+5].x = view_w/2 - resize(100);
+			// ボタン (button)
 			spr[sn_btn+5].y = view_h/2 + resize(70);
 			spr[sn_btn+5].visible = true;
 			btn_func[5] = start_title;
@@ -1249,7 +1249,7 @@ function start_history(){
 		draw_areadice(sn_dice+i,prio[i].an);
 	}
 	
-	// ボタン
+	// ボタン (button)
 	spr[sn_btn+5].x = view_w/2 - resize(100);
 	spr[sn_btn+5].y = view_h*0.88;
 	spr[sn_btn+5].visible = true;
