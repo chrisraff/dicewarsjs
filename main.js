@@ -74,6 +74,9 @@ var bturn = 0;	// バトル用ターン (battle turn)
 // 履歴の再生用
 var replay_c=0;
 
+// spectating
+var spectate_mode = false;
+
 // サウンド関係
 var soundon = true;
 var manifest = [
@@ -317,8 +320,8 @@ function init() {
 	stage.addChild(spr[sn]);
 	sn++;
 	
-	var btxt = ["START","TOP PAGE","YES","NO","END TURN","TITLE","HISTORY"];
 	// ボタン (button)
+	var btxt = ["START","TOP PAGE","YES","NO","END TURN","TITLE","HISTORY","SPECTATE"];
 	bmax = btxt.length;
 	sn_btn = sn;
 	for( i=0; i<bmax; i++ ){
@@ -460,6 +463,8 @@ function start_title(){
 	var i;
 	
 	for( i=0; i<sn_max; i++ ) spr[i].visible = false;
+
+	spectate_mode = false;
 	
 	spr[sn_title].visible = true;
 	spr[sn_title].x = 0;
@@ -683,7 +688,12 @@ function start_player(){
 	for( var i=sn_info; i<sn_max; i++ ){
 		spr[i].visible = false;
 	}
-	draw_player_data();
+
+	if ( !spectate_mode ) {
+		draw_player_data();
+	}else{
+		spr[sn_btn+5].visible = true;
+	}
 	
 	if( game.jun[game.ban] == game.user ){
 		start_man();
@@ -1020,7 +1030,7 @@ function after_battle(){
 	// 履歴
 	game.set_his(game.area_from,game.area_to,defeat);
 
-	if( game.player[game.user].area_tc==0 ){
+	if( game.player[game.user].area_tc==0 && !spectate_mode){
 		draw_player_data();
 		start_gameover();
 	}else{
@@ -1029,8 +1039,13 @@ function after_battle(){
 			if( game.player[i].area_tc>0 ) c++;
 		}
 		if( c==1 ){
-			draw_player_data();
-			start_win();
+			if ( !spectate_mode ) {
+				draw_player_data();
+				start_win();
+			}else{
+				// an ai has won
+				start_gameover()
+			}
 		}else{
 			start_player();
 		}
@@ -1171,16 +1186,22 @@ function gameover(){
 		o.y+=0.5;
 		if( o.y>-70 ) o.y=-70;
 		if( waitcount>=160 ){
-			spr[sn_btn+5].x = view_w/2 - resize(100);
 			// ボタン (button)
+			spr[sn_btn+5].x = view_w/2 - resize(200);
 			spr[sn_btn+5].y = view_h/2 + resize(70);
 			spr[sn_btn+5].visible = true;
 			btn_func[5] = start_title;
-			spr[sn_btn+6].x = view_w/2 + resize(100);
+			spr[sn_btn+6].x = view_w/2;
 			spr[sn_btn+6].y = view_h/2 + resize(70);
 			spr[sn_btn+6].visible = true;
 			btn_func[6] = start_history;
-			
+			if ( !spectate_mode ) {
+				spr[sn_btn+7].x = view_w/2 + resize(200);
+				spr[sn_btn+7].y = view_h/2 + resize(70);
+				spr[sn_btn+7].visible = true;
+				btn_func[7] = start_spectate;
+			}
+
 			waitcount=0;
 			stat++;
 		}
@@ -1341,7 +1362,35 @@ function toppage(){
 	location.href="https://www.gamedesign.jp/";
 }
 
+////////////////////////////////////////////////////
+// spectating
+////////////////////////////////////////////////////
 
+function start_spectate(){
+	var i;
+	
+	spr[sn_win].visible = false;
+	spr[sn_gameover].visible = false;
+	spr[sn_ban].visible = false;
+	for( i=0; i<8; i++ ) spr[sn_player+i].visible = false;
+	for( i=0; i<bmax; i++ ) spr[sn_btn+i].visible = false;
+	
+	// ボタン (button)
+	spr[sn_btn+5].x = view_w/2;
+	spr[sn_btn+5].y = view_h*0.88;
+	spr[sn_btn+5].visible = true;
+	btn_func[5] = start_title;
+
+	spectate_mode = true;
+	
+	stage.update();
+	stat = 0;
+	waitcount = 0;
+	timer_func = start_player;
+	click_func = null;
+	move_func = null;
+	releaese_func = null;
+}
 
 
 
