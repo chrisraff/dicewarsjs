@@ -625,6 +625,8 @@ var Game = function(){
 
 						} else continue; // let the other one out first
 					}
+					this.area_from = j;
+					this.area_to = i;
 				}
 
 			}
