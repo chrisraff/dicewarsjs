@@ -455,7 +455,7 @@ var Game = function(){
 			return this.com_defensive();
 
 			default:
-			console.log('oops');
+			console.log('Unrecognized AI identifier, the player will pass');
 			return 0;
 		}
 	}
