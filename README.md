@@ -1,5 +1,7 @@
 # Dicewars JS
 
+Play my version [here](https://www.chrisraff.com/dicewars/). My slightly improved AI are the pink, green and lime player.
+
 This is a modification of the game [Dice Wars](https://www.gamedesign.jp/games/dicewars/) from gamedesign.jp. I have added the ability to have multiple types of AI so I could try to create my own AI for the game.
 
 ## Usage
