@@ -39,7 +39,16 @@ var HistoryData = function(){
 }
 
 var Game = function(){
-	this.ai = [-1,1,1,1,0,0,0,0];			// the ai type - 0: original, 1: defensive ai
+	this.ai = [
+		0,
+		ai_defensive,
+		ai_defensive,
+		ai_defensive,
+		ai_default,
+		ai_default,
+		ai_default,
+		ai_default
+	];
 
 	var i,j;
 
@@ -445,199 +454,13 @@ var Game = function(){
 	}
 
 	/////////////////////////////////////////////////////////////////////
-	// COM思考 (COM thinking - splitter)
+	// COM思考 (COM thinking - AI's move)
 	this.com_thinking = function() {
-		switch (this.ai[ this.jun[this.ban] ]) {
-			case 0:
-			return this.com_original();
+		var ai_function = this.ai[ this.jun[this.ban] ]
 
-			case 1:
-			return this.com_defensive();
-
-			default:
-			console.log('Unrecognized AI identifier, the player will pass');
-			return 0;
-		}
-	}
-	
-	/////////////////////////////////////////////////////////////////////
-	// COM思考 (COM thinking - original)
-	this.com_original = function(){
-		var i,j;
-		// エリア数、ダイス総数チェック	(Number of areas, total dice check)	
-		for( i=0; i<8; i++ ){
-			this.player[i].area_c = 0;
-			this.player[i].dice_c = 0;
-		}
-		var sum = 0;
-		for( i=1; i<this.AREA_MAX; i++ ){
-			if( this.adat[i].size == 0 ) continue;
-			var arm = this.adat[i].arm;
-			this.player[arm].area_c++;
-			this.player[arm].dice_c += this.adat[i].dice;
-			sum += this.adat[i].dice;
-		}
-		// ダイス順位 (Dice ranking)
-		for( i=0; i<8; i++ ) this.player[i].dice_jun = i;
-		for( i=0; i<8-1; i++ ){
-			for( j=i+1; j<8; j++ ){
-				if( this.player[i].dice_c < this.player[j].dice_c ){
-					var tmp = this.player[i].dice_jun;
-					this.player[i].dice_jun = this.player[j].dice_jun;
-					this.player[j].dice_jun = tmp;
-				}
-			}
-		}
-		// ダントツトップ目 (Dantotsu top eyes...find the most advantaged player)
-		var top = -1;
-		for( i=0; i<8; i++ ){
-			if( this.player[i].dice_c > sum*2/5 ) top = i;
-		}
-		// 攻撃元、攻撃先のリストを作り、ランダムで決める (Make a list of attack sources and destintions, decide at random)
-		var list_from = new Array(this.AREA_MAX*this.AREA_MAX);
-		var list_to = new Array(this.AREA_MAX*this.AREA_MAX);
-		var lc = 0;
-		var pn = this.jun[this.ban];
-		for( i=1; i<this.AREA_MAX; i++ ){
-			if( this.adat[i].size == 0 ) continue;
-			if( this.adat[i].arm != pn ) continue;
-			if( this.adat[i].dice <= 1 ) continue;
-			for( j=1; j<this.AREA_MAX; j++ ){
-				if( this.adat[j].size == 0 ) continue;
-				if( this.adat[j].arm == pn ) continue;
-				if( this.adat[i].join[j]==0 ) continue;
-				if( top>=0 ){	// ダントツがいて、２着以下から２着以下 (if there is an advantaged player, make sure to attack it?)
-					if( this.adat[i].arm!=top && this.adat[j].arm!=top ) continue;
-				}
-				if( this.adat[j].dice > this.adat[i].dice ) continue;	// 敵が多勢 (massive enemies)
-				// 敵と同数の場合 (if we have the same number of dice as enemies)
-				if( this.adat[j].dice == this.adat[i].dice ){
-					var en = this.adat[j].arm;
-					var f=0;
-					if( this.player[pn].dice_jun == 0 ) f=1;		// 自分がトップの時は仕掛ける (If we're top ranked, attack)
-					if( this.player[en].dice_jun == 0 ) f=1;		// 相手がトップの時は仕掛ける (If the opponent is top ranked, attack)
-					if( Math.random()*10>1 ) f=1;
-					if( f==0 ) continue;
-				}
-				list_from[lc] = i;
-				list_to[lc] = j;
-				lc++;
-			}
-		}
-		if( lc == 0 ) return 0;
-
-		var n = Math.floor(Math.random()*lc);
-		this.area_from = list_from[n];
-		this.area_to = list_to[n];
+		return ai_function(this);
 	}
 
-	/////////////////////////////////////////////////////////////////////
-	// 履歴に追加
-	this.com_defensive = function(){
-		// compute info for every area only once
-		area_get_info = function( area_id ){
-			var friendly_neighbors = 0;
-			var unfriendly_neighbors = 0;
-			var highest_friendly_neighbor_dice = 0;
-			var highest_unfriendly_neighbor_dice = 0;
-			var second_highest_unfriendly_neighbor_dice = 0;
-			var num_neighbors = 0;
-
-			for ( i=0; i<that.AREA_MAX; i++ ) {
-				if (i == area_id) continue;
-
-				// find adjacent regions
-				if ( ! that.adat[ area_id ].join[ i ] )
-					continue;
-
-				var num_dice = that.adat[i].dice;
-
-				if (that.adat[area_id].arm == that.adat[i].arm) {
-					friendly_neighbors += 1;
-
-					if (highest_friendly_neighbor_dice < num_dice)
-						highest_friendly_neighbor_dice = num_dice;
-				}
-				else {
-					unfriendly_neighbors += 1;
-
-					if (highest_unfriendly_neighbor_dice < num_dice) {
-						second_highest_unfriendly_neighbor_dice = highest_unfriendly_neighbor_dice;
-						highest_unfriendly_neighbor_dice = num_dice;
-					}
-					else if (second_highest_unfriendly_neighbor_dice < num_dice)
-						second_highest_unfriendly_neighbor_dice = num_dice;
-				}
-			}
-
-			num_neighbors = friendly_neighbors + unfriendly_neighbors
-
-			return {friendly_neighbors: friendly_neighbors,
-					unfriendly_neighbors: unfriendly_neighbors,
-					highest_friendly_neighbor_dice: highest_friendly_neighbor_dice,
-					highest_unfriendly_neighbor_dice: highest_unfriendly_neighbor_dice,
-					second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice,
-					num_neighbors: num_neighbors
-				};
-		}
-
-		var that = this; // for getting variables in the map function
-
-		// compute the area info once
-		var area_info = [...Array(this.AREA_MAX).keys()].map( area_get_info );
-
-		var pn = this.get_pn();
-
-		this.area_from = -1;
-		this.area_to = -1;
-
-		// for all potential defenders
-		for ( i=0; i<this.AREA_MAX; i++ ) {
-			if ( this.adat[i].arm == pn ) continue;
-
-			// for all potential attackers of this defender
-			for ( j=0; j<this.AREA_MAX; j++ ) {
-				if ( this.adat[j].arm != pn ) continue;
-				if ( ! this.adat[i].join[j] ) continue;
-
-				// is the attacker actually in a position to attack?
-				if ( this.adat[i].dice >= this.adat[j].dice && this.adat[j].dice != 8 ) continue;
-				// does winning invite a strong counter attack?
-				if ( area_info[i].highest_friendly_neighbor_dice > this.adat[j].dice ) continue;
-				// does the attacker have something to defend from (and I have a meaningful connected area)?
-				if ( this.player[pn].area_tc > 4
-					&& area_info[ j ].second_highest_unfriendly_neighbor_dice > 2
-					&& this.player[pn].stock == 0 ) continue;
-
-				// check against previous attacker
-				if (this.area_from == -1) {
-					// no previous attacker, assign them
-					this.area_from = j;
-					this.area_to = i;
-				} else {
-					if ( area_info[ this.area_from ].unfriendly_neighbors == 1) { // if it's the only way out
-						if ( area_info[j].unfriendly_neighbors == 1 ) { // ...for both of them
-							if ( this.adat[j].dice < this.adat[ this.area_from ].dice ) continue; // prefer larger dice
-							else if ( adat[j].dice == this.adat[ this.area_from ] .dice)
-								// then prefer the less connected region
-								if ( area_info[j].num_neighbors < area_info[this.area_from].num_neighbors )
-									continue
-
-						} else continue; // let the other one out first
-					}
-					this.area_from = j;
-					this.area_to = i;
-				}
-
-			}
-		}
-
-		// only return 0 if I don't want to make a move
-		if (this.area_from == -1)
-			return 0;
-	}
-
-	
 	/////////////////////////////////////////////////////////////////////
 	// 履歴に追加
 	this.set_his = function( from, to, res ){
