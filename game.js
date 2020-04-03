@@ -40,8 +40,8 @@ var HistoryData = function(){
 
 var Game = function(){
 	this.ai = [
-		0,
 		ai_defensive,
+		null,
 		ai_defensive,
 		ai_defensive,
 		ai_default,
