@@ -1,6 +1,6 @@
 function ai_defensive(game) {
-    // compute info for every area only once
-    area_get_info = function( area_id ){
+    // function to analyze each area
+    function area_get_info( area_id ) {
         var friendly_neighbors = 0;
         var unfriendly_neighbors = 0;
         var highest_friendly_neighbor_dice = 0;
@@ -37,16 +37,17 @@ function ai_defensive(game) {
 
         num_neighbors = friendly_neighbors + unfriendly_neighbors
 
-        return {friendly_neighbors: friendly_neighbors,
-                unfriendly_neighbors: unfriendly_neighbors,
-                highest_friendly_neighbor_dice: highest_friendly_neighbor_dice,
-                highest_unfriendly_neighbor_dice: highest_unfriendly_neighbor_dice,
-                second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice,
-                num_neighbors: num_neighbors
-            };
+        return {
+            friendly_neighbors: friendly_neighbors,
+            unfriendly_neighbors: unfriendly_neighbors,
+            highest_friendly_neighbor_dice: highest_friendly_neighbor_dice,
+            highest_unfriendly_neighbor_dice: highest_unfriendly_neighbor_dice,
+            second_highest_unfriendly_neighbor_dice: second_highest_unfriendly_neighbor_dice,
+            num_neighbors: num_neighbors
+        };
     }
 
-    // compute the area info once
+    // compute the area info once per move
     var area_info = [...Array(game.AREA_MAX).keys()].map( area_get_info );
 
     var pn = game.get_pn();

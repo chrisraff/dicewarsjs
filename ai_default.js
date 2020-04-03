@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// COM思考 (COM thinking - original)
+// COM思考 (COM thinking - the original AI from gamedesign.jp)
 function ai_default(game){
     var i,j;
     // エリア数、ダイス総数チェック	(Number of areas, total dice check)	
