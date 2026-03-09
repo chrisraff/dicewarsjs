@@ -82,7 +82,7 @@ function ai_defensive(game) {
                 if ( area_info[ game.area_from ].unfriendly_neighbors == 1) { // if it's the only way out
                     if ( area_info[j].unfriendly_neighbors == 1 ) { // ...for both of them
                         if ( game.adat[j].dice < game.adat[ game.area_from ].dice ) continue; // prefer larger dice
-                        else if ( adat[j].dice == game.adat[ game.area_from ] .dice)
+                        else if ( game.adat[j].dice == game.adat[ game.area_from ] .dice)
                             // then prefer the less connected region
                             if ( area_info[j].num_neighbors < area_info[game.area_from].num_neighbors )
                                 continue
