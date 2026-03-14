@@ -31,6 +31,118 @@ color:#aaaaaa;
 text-decoration:none;
 }
 
+/* ── Tournament overlay ──────────────────────────────────────────── */
+#tournament-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10,10,20,0.95);
+    z-index: 200;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: center;
+    font-family: 'Anton', sans-serif;
+    color: #fff;
+    box-sizing: border-box;
+}
+#t-panel {
+    background: #1a1a2e;
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 30px auto;
+    max-width: 660px;
+    width: 94%;
+    text-align: left;
+}
+.t-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: center;
+}
+.t-row label {
+    font-size: 0.95em;
+    color: #ccc;
+}
+.t-row input, .t-row select {
+    background: #2a2a3e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Anton', sans-serif;
+    font-size: 0.95em;
+}
+.t-player-config {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 4px;
+}
+.t-slot-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #252540;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+.t-slot-row select {
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-family: 'Anton', sans-serif;
+    font-size: 0.9em;
+}
+.t-btn {
+    font-family: 'Anton', sans-serif;
+    font-size: 1em;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+.t-btn:disabled { opacity: 0.4; cursor: default; }
+.t-btn-run   { background: #aa0000; color: #fff; }
+.t-btn-run:hover:not(:disabled)   { background: #cc0000; }
+.t-btn-stop  { background: #555; color: #fff; }
+.t-btn-stop:hover:not(:disabled)  { background: #777; }
+.t-btn-close { background: #333; color: #aaa; }
+.t-btn-close:hover { background: #555; }
+.t-progress-track {
+    background: #333;
+    height: 18px;
+    border-radius: 9px;
+    overflow: hidden;
+}
+.t-progress-fill {
+    background: #aa0000;
+    height: 100%;
+    border-radius: 9px;
+    width: 0%;
+    transition: width 0.25s ease;
+}
+.t-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+.t-table th, .t-table td {
+    text-align: left;
+    padding: 5px 10px;
+    border-bottom: 1px solid #333;
+}
+.t-table th { color: #aaa; font-size: 0.85em; }
+.t-table td { color: #eee; }
+.t-table tr:hover td { background: #252540; }
 </style>
 
 <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
@@ -41,6 +153,7 @@ text-decoration:none;
 <script src="ai_example.js"></script>
 <script src="game.js"></script>
 <script src="main.js"></script>
+<script src="tournament.js"></script>
 
 <!--Analyzer start-->
 <!-- <script type="text/javascript">
@@ -60,8 +173,13 @@ text-decoration:none;
 <body>
 <canvas id="myCanvas"></canvas>
 
+<!-- Tournament overlay (populated by tournament.js) -->
+<div id="tournament-overlay"></div>
+
 <div style="padding:20px ;">
 <a href="https://www.gamedesign.jp/games/dicewars/flash/dice.html">Previous version (FLASH)</a>
+&nbsp;|&nbsp;
+<a href="#" onclick="showTournament();return false;" style="color:#aaaaaa;">Tournament / Benchmark</a>
 </div>
 
 </body>
