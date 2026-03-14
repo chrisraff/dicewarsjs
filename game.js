@@ -44,7 +44,7 @@ var Game = function(){
 		ai_example,
 		ai_defensive,
 		ai_defensive,
-		ai_default,
+		ai_strategic,
 		ai_default,
 		ai_default,
 		ai_default
