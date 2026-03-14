@@ -321,7 +321,7 @@ function init() {
 	sn++;
 	
 	// ボタン (button)
-	var btxt = ["START","TOP PAGE","YES","NO","END TURN","TITLE","HISTORY","SPECTATE"];
+	var btxt = ["START","TOP PAGE","YES","NO","END TURN","TITLE","HISTORY","SPECTATE","TOURNAMENT"];
 	bmax = btxt.length;
 	sn_btn = sn;
 	for( i=0; i<bmax; i++ ){
@@ -492,6 +492,10 @@ function start_title(){
 	spr[sn_btn+1].y = resize(490);
 	spr[sn_btn+1].visible = true;
 	btn_func[1] = toppage;
+	spr[sn_btn+8].x = resize(640);
+	spr[sn_btn+8].y = resize(590);
+	spr[sn_btn+8].visible = true;
+	btn_func[8] = showTournament;
 
 	stage.update();
 
