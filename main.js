@@ -478,7 +478,7 @@ function start_title(){
 	spr[sn_title].gotoAndStop("title");
 
 	spr[sn_mes].visible = true;
-	spr[sn_mes].text = "Copyright (C) 2001 GAMEDESIGN";
+	spr[sn_mes].text = "Copyright (C) 2001 GAMEDESIGN\nModified by Chris Raff";
 	spr[sn_mes].color = "#aaaaaa";
 	spr[sn_mes].textAlign = "right";
 	spr[sn_mes].x = view_w*0.9;
